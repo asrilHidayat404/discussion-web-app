@@ -1,11 +1,11 @@
 "use client";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { LoginLink, useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import React, { useActionState } from "react";
 import { PostQuestion } from "../action/script";
 
 const Form = () => {
   
-    const [state, action, isLoading] = useActionState(PostQuestion, null)
+    const [error, action, isLoading] = useActionState(PostQuestion, null)
   return (
     <div className="mb-8">
       <form action={action}>
@@ -15,6 +15,7 @@ const Form = () => {
           rows={4}
           name="question"
         />
+        {error && <LoginLink className="text-center text-red-500 underline block">{error}</LoginLink>}
         <button type="submit" className="bg-black text-white py-2 px-4 rounded">
           Submit question
         </button>

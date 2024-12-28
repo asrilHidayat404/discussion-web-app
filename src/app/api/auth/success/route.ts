@@ -12,16 +12,17 @@ export async function GET() {
         throw new Error("something went wrong with authentication" + user);
 
     let dbUser = await prisma.user.findUnique({
-        where: {kindeId: user.id}
+        where: {id: user.id}
     });
-
+    console.log({dbUser});
+    
     if (!dbUser) {
         dbUser = await prisma.user.create({
             data: {
-                kindeId: user.id,
-                firstName: user.given_name ?? "",
-                lastName: user.family_name ?? "",
-                email: user.email ?? "" // Using nullish coalescing operator to provide a default empty string value
+                id: user.id,
+                firstname: user.given_name ?? "",
+                lastname: user.family_name ?? "",
+                picture: user.picture,
             }
         });
     }

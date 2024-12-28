@@ -13,17 +13,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// model User {
+//   id        Int      @id @default(autoincrement())
+//   kindeId   String   @unique
+//   email     String   @unique
+//   firstName String
+//   lastName  String
+// }
+
+// model Questions {
+//   id        Int @id @default(autoincrement()) 
+//   userId    String
+//   question  String
+//   createdAt DateTime @default(now())
+// }
+
 model User {
-  id        Int      @id @default(autoincrement())
-  kindeId   String   @unique
-  email     String   @unique
-  firstName String
-  lastName  String
+  id        String    @id @default(uuid())
+  firstname String
+  lastname String
+  picture   String?
+  questions Question[]
 }
 
-model Questions {
-  id        Int @id @default(autoincrement())
-  userId    String
+model Question {
+  id        String @id @default(uuid())
   question  String
+  userId    String
   createdAt DateTime @default(now())
+  user      User @relation(fields: [userId], references: [id])
 }

@@ -1,26 +1,35 @@
 import Main from "@/layouts/Main";
-import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import prisma from "@/libs/db";
+import QuestionList from "./components/QuestionList";
+import Form from "./components/Form";
 
-export default async function Home() { 
-  const {isAuthenticated} = getKindeServerSession()
-  const isLoggedIn = await isAuthenticated()
+export default async function Home() {
+  const questions = await prisma.question.findMany({
+    include: {
+      user: true,
+    }, 
+    orderBy: [
+      {
+        createdAt: 'desc',
+      }
+    ],
+  });
   return (
     <Main>
-      <div className="flex justify-center min-h-screen gap-5 items-center">
-        {
-           !isLoggedIn ? (
-            <>
-              <LoginLink className="bg-gray-700 hover:bg-gray-600 px-4 py-1 rounded-lg text-slate-100 font-semibold ">
-                Login
-              </LoginLink>
-              <RegisterLink className="bg-gray-600 hover:bg-gray-700 px-4 py-1 rounded-lg text-slate-100 font-semibold ">
-                sign In
-              </RegisterLink></>
-          ) : (
-            <h1>Welcome To App</h1>
-          )
-        }
+      <div className="min-h-screen gap-5">
+        <main>
+          <header>
+            <h1 className="font-bold text-2xl text-center">
+              Welcome To Discussion
+            </h1>
+          </header>
+          <div className="mb-32">
+            <QuestionList questions={questions} />
+          </div>
+          <footer>
+            <Form />
+          </footer>
+        </main>
       </div>
     </Main>
   );

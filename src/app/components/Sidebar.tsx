@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 import React from "react";
 
 const Sidebar = () => {
-  const Links = [
+  const routes = [
     {
       label: "Home",
       path: "/",
@@ -17,41 +17,41 @@ const Sidebar = () => {
     {
       label: "Dashboard",
       path: "/dashboard",
-      requiredAuth: true,
+      requiredAuth: ["ask:question"],
     },
     {
       label: "Admin-area",
-      path: "/admin",
-      requireAuth: true,
+      path: "/dashboard/admin",
+      requiredAuth: ["delete:question"],
     },
   ];
   const path = usePathname();
-  const { user, isLoading, isAuthenticated } = useKindeBrowserClient();
-
-  console.log("User Object:", user);
-  console.log("Is Loading:", isLoading);
-  console.log("Is Authenticated:", isAuthenticated);
+  const { user, isLoading, isAuthenticated, getPermissions } =
+    useKindeBrowserClient();
+  const { permissions } = getPermissions();
 
   return (
     <div className="w-[350px] h-full relative">
       <aside className="bg-gray-900 text-white fixed w-[275px] left-0 h-full flex flex-col justify-between p-4">
         <nav className="w-full">
           <ul className="flex flex-col gap-2">
-            {Links.map((link, i) => {
-              if (link.requiredAuth && !isAuthenticated) {
-                return;
+            {routes.map((link, i) => {
+              if (
+                !link.requiredAuth ||
+                link.requiredAuth.every((p) => permissions?.includes(p))
+              ) {
+                return (
+                  <Link
+                    className={`text-center py-2 rounded-md ${
+                      path == link.path ? "bg-gray-700" : ""
+                    } hover:bg-gray-600`}
+                    key={i}
+                    href={link.path}
+                  >
+                    {link.label}
+                  </Link>
+                );
               }
-              return (
-                <Link
-                  className={`text-center py-2 rounded-md ${
-                    path == link.path ? "bg-gray-700" : ""
-                  } hover:bg-gray-600`}
-                  key={i}
-                  href={link.path}
-                >
-                  {link.label}
-                </Link>
-              );
             })}
           </ul>
         </nav>
@@ -65,8 +65,7 @@ const Sidebar = () => {
                 width={70}
                 height={70}
               />
-            ) 
-            }
+            )}
 
             {user?.email && (
               <p className="text-sm text-center">Logged in as {user?.email}</p>
