@@ -20,7 +20,7 @@ export default async function Home() {
         <main>
           <header>
             <h1 className="font-bold text-2xl text-center">
-              Welcome To Discussion
+              Welcome To Discussion, Tod
             </h1>
           </header>
           <div className="mb-32">
